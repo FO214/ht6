@@ -3,14 +3,89 @@ from db.main import update, get_hp, get_data
 from flask_cors import CORS
 from ai.agent import agent_executor
 from ai.vision import get_item
+from flask_socketio import SocketIO, emit
+import random
 import time
 from arduino.read_serial import get_hardware_data
 
 app = Flask(__name__)
 CORS(app)
 
+socketio = SocketIO(app, cors_allowed_origins="*")
+
+player_map = {1:"P1", 2:"P2"}
+players = {}
+
+
+current_turn = 1
+game_in_progress = False
+
+@socketio.on('connect')
+def handle_connect():
+    global players, game_in_progress
+    if len(players) < 2:
+        player_number = len(players) + 1
+        players[player_number] = {"health": get_hp(player_map[player_number]), "sid": request.sid}
+        print(f'Player {player_number} connected')
+        emit('player_assignment', {'player': player_map[player_number]})
+        
+        if len(players) == 2:
+            game_in_progress = True
+            emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
+            emit('your_turn', {'message': 'Your turn!'}, room=players[1]['sid'])
+
+@socketio.on('move')
+def handle_move(data):
+    global current_turn
+    player = data['player']
+    move = data['move']
+    
+    if not game_in_progress:
+        emit('error', {'message': 'Game has not started yet'})
+        return
+    
+    if player != current_turn:
+        emit('error', {'message': 'Not your turn'})
+        return
+    
+    damage = random.randint(5, 20) #make the acc dmg
+    opponent = 2 if player == 1 else 1
+    players[opponent]['health'] -= damage
+    
+    emit('move_result', {
+        'player': player,
+        'move': move,
+        'damage': damage,
+        'opponent_health': players[opponent]['health']
+    }, broadcast=True)
+    
+    if players[opponent]['health'] <= 0:
+        emit('game_over', {'winner': player}, broadcast=True)
+        reset_game()
+    else:
+        current_turn = opponent
+        emit('your_turn', {'message': 'Your turn!'}, room=players[current_turn]['sid'])
+
+def reset_game():
+    global players, current_turn, game_in_progress
+    players = {}
+    current_turn = 1
+    game_in_progress = False
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    global players, game_in_progress
+    for player, data in players.items():
+            del players[player]
+            break
+    if game_in_progress:
+        emit('game_over', {'winner': 'Opponent disconnected'}, broadcast=True)
+    reset_game()
+    print('Player disconnected')
+
+
 # return json of dimness and moistness
-@app.route("/battle-stats", methods=["GET"])
+@app.route("/battle-stats", methods=["POST"])
 def get_battle_stats():
     try:
         data = request.get_json()
@@ -30,32 +105,7 @@ def get_battle_stats():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route("/get-battle-update", methods=["GET"])
-def get_battle_updates():
-    try:
-        data = request.get_json()
-        usr = "P2" if data["user"] == "P1" else "P1"
-        return get_hp(usr)
-
-    except Exception as e:
-        return e
-
-
-@app.route("/attack", methods=["POST"])
-def attack_plant():
-    try:
-        data = request.get_json()
-        usr = data["user"]
-        dmg = data['damage']
-        update(usr, dmg)
-
-        return "success"
-    except Exception as e:
-        return e
-
-#webcam
-
-@app.route("/plant-profile", methods=["GET"])
+@app.route("/plant-profile", methods=["POST"])
 def feedback():
     try:
         data = request.get_json()
@@ -74,6 +124,5 @@ def feedback():
         return e
 
 
-
 if __name__ == '__main__':
-    app.run(debug=True, port=3000)
+    socketio.run(app, debug=True, host='0.0.0.0', port=5001)

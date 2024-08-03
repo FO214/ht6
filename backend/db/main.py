@@ -27,4 +27,4 @@ def get_data(id):
 def get_hp(id):
     curr = collection.find_one({"_id":id})
 
-    return curr['plants'][0]["CURR_HP"]
+    return curr['plants'][0]["HP"]
