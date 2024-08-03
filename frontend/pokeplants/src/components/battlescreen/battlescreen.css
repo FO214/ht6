@@ -95,12 +95,12 @@ body{
     position: absolute;
     right: -28px; 
     top: 15px; 
-    width: 0; /* Set width to 0 */
-    height: 0; /* Set height to 0 */
+    width: 0; 
+    height: 0; 
     border-top: 15px solid transparent;
     border-bottom: 15px solid transparent;
     border-right: 25px solid var(--grey-green);
-    transform: scaleX(-1); /* Flip the triangle horizontally */
+    transform: scaleX(-1); 
   }
 
   .plant-name-lvl {
@@ -157,7 +157,7 @@ body{
   background-color: #f44336;
 }
 
-.opponent-plant-battler.attacking .plant-image {
+.attacking img {
   animation: flash 0.3s ease-in-out;
 }
 
@@ -247,4 +247,34 @@ body{
     box-shadow: 4px 4px 0 #505055, 
                 8px 8px 0 #6f6589; 
   }  
+
+  .attack-text {
+    color: var(--light-green);
+    margin: 10px 0;
+    background-color: var(--dark-green);
+    position: fixed;
+    left: 0;
+    bottom: 225px;
+    width: 400px;
+    height: 40px;
+  }
+
+  .attack-text h3 {
+    text-align: center;
+    font-size: 1.5em;
+    margin-top: 9px;
+  }
+
+  .attack-text h3::before {
+    content: '';
+    position: absolute;
+    right: -30px; 
+    top: 0px; 
+    width: 0; 
+    height: 0; 
+    border-top: 40px solid transparent;
+    border-bottom: 0px solid transparent;
+    border-right: 30px solid var(--dark-green);
+    transform: scaleX(-1); 
+  }
   
