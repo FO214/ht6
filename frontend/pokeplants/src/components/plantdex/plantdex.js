@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './plantdex.css';
 
-const plants = ['Plant 1', 'Plant 2', 'Plant 3'];
+const plants = ['Plant 1', 'Plant 2'];
 
 const Plantdex = () => {
   const navigate = useNavigate();
@@ -48,6 +48,11 @@ const Plantdex = () => {
     navigate('/');
   };
 
+  const handleAddPlantClick = () => {
+    /* ADD BACKEND STUFF HERE */
+    console.log("Add Plant Clicked");
+  };
+
   return (
     <div className="plantdex-container">
       <button className="home-button" onClick={handleHomeClick}>HOME</button>
@@ -79,6 +84,12 @@ const Plantdex = () => {
                   {plant}
                 </div>
               ))}
+              <div 
+                className="add-plant-circle"
+                onClick={handleAddPlantClick}
+              >
+                +
+              </div>
             </div>
           )}
         </div>

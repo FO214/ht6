@@ -47,6 +47,7 @@ const App = () => {
   const handleStartBattle = () => {
     if (isAuthenticated) {
       setIsModalOpen(true);
+      setElapsedTime(0);
     } else {
       loginWithRedirect({
         appState: { targetUrl: '/battle' }
