@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
-import LoginButton from './components/login';
-import LogoutButton from './components/logout';
+import AuthButton from './components/authbutton/authbutton';
 import BattleScreen from './components/battlescreen/battlescreen';
 import Plantdex from './components/plantdex/plantdex';
 
@@ -32,8 +31,7 @@ const App = () => {
 
   return (
     <div className="App">
-      <LoginButton />
-      <LogoutButton />
+      <AuthButton />
       <button onClick={handleStartBattle}>Start Battle</button>
       <Routes>
         <Route path="/" element={<Home />} />
