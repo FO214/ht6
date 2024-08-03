@@ -2,15 +2,17 @@
     --dark-green: #174B42;
     --light-green: #E2ECEC;
     --medium-green: #658f8c;
+    --highlight-yellow: #FFD700;
 }
 
 body {
     background-color: var(--light-green);
     overflow: hidden;
+    font-family: 'VT323', monospace;
+    background-image: url('bg.jpeg');
 }
 
 h1 {
-    font-family: 'VT323', monospace;
     color: var(--dark-green);
     text-align: center;
     font-size: 40px;
@@ -31,18 +33,22 @@ h1 {
 }
 
 .sidebar {
-    flex: 1;
+    flex: 2.2;
     background-color: var(--medium-green);
-    padding: 10px;
+    padding: 20px;
+    position: relative;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .toggle-buttons {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
     display: flex;
-    justify-content: space-around;
-    background-color: var(--medium-green);
-    padding: 10px;
+    justify-content: space-between;
 }
 
 .toggle-buttons button {
@@ -52,32 +58,58 @@ h1 {
     border: none;
     cursor: pointer;
     font-size: 20px;
+    color: var(--dark-green);
+    border: 2px solid var(--dark-green);
 }
 
 .toggle-buttons button:disabled {
-    color: #ccc;
     cursor: default;
+    color: var(--dark-green);
+    border: 2px solid var(--dark-green);
+}
+
+.toggle-buttons button.highlighted {
+    color: var(--light-green);
+    background-color: var(--dark-green);
+    border: 2px solid var(--dark-green);
 }
 
 .plant-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    align-items: center;
+    gap: 5px;
     margin-top: 20px;
 }
 
 .plant-circle {
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
     background-color: var(--light-green);
     border-radius: 50%;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    border: 4px solid var(--medium-green);
 }
 
-.plant-care-info {
+.plant-circle.selected {
+    border: 4px solid var(--dark-green);
+}
+
+.plant-info-text {
     margin-top: 20px;
     color: var(--light-green);
     font-family: 'VT323', monospace;
+    font-size: 18px;
+    text-align: center;
+}
+
+.plant-info {
+    margin-top: 20px;
+    color: var(--light-green);
     font-size: 20px;
 }
 
@@ -86,7 +118,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .plant-img {
