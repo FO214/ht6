@@ -11,15 +11,14 @@ cluster = MongoClient(uri, tls=True, tlsCAFile=certifi.where())
 db = cluster["pokeplants"]
 collection = db["users"]
 
+# def update(id, dmg):
+#     curr = collection.find_one({"_id": id})
 
-def update(id, dmg):
-    curr = collection.find_one({"_id": id})
+#     curr["plants"][0]["CURR_HP"]-=dmg
 
-    curr["plants"][0]["CURR_HP"]-=dmg
+#     collection.replace_one({"_id":id}, curr)  
 
-    collection.replace_one({"_id":id}, curr)  
-
-    return curr
+#     return curr
 
 def get_data(id):
     return collection.find_one({"_id":id})['plants'][0]
@@ -27,4 +26,16 @@ def get_data(id):
 def get_hp(id):
     curr = collection.find_one({"_id":id})
 
-    return curr['plants'][0]["CURR_HP"]
+    return curr['plants'][0]["HP"]
+
+def get_atk(id):
+    curr = collection.find_one({"_id":id})
+
+    return curr['plants'][0]["ATK"]
+
+def add_plant(usr_id, plant):
+    curr = collection.find_one({"_id": usr_id})
+    curr["plants"].append(plant)
+
+    collection.replace_one({"_id":id}, curr)
+    return curr
