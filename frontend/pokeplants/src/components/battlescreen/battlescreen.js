@@ -33,11 +33,6 @@ const BattleScreen = () => {
       console.log(`Assigned player: ${data.player}`);
     });
 
-    socket.on('connect', () => {
-      console.log('Connected to server');
-      socket.emit('queue_battle');
-    });
-
     socket.on('init_curr_stats', (data) => {
       console.log(`Initial stats:`, data);
     });
