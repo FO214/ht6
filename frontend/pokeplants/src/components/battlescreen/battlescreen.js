@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './battlescreen.css';
+import Modal from '../end-popup/end-popup';
 
 const BattleScreen = () => {
   useEffect(() => {
@@ -27,6 +28,8 @@ const BattleScreen = () => {
   const [announcement, setAnnouncement] = useState('');
   const [playerBeingAttacked, setPlayerBeingAttacked] = useState(false);
   const [opponentBeingAttacked, setOpponentBeingAttacked] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   const calculateHPClass = (hp, maxHP) => {
     const percentage = (hp / maxHP) * 100;
@@ -40,7 +43,11 @@ const BattleScreen = () => {
     setAnnouncement(`${player.name} uses Attack 1!`);
     setOpponentBeingAttacked(true);
     setOpponent(prev => {
-      const newHP = Math.max(prev.currentHP - 25, 0);
+      const newHP = Math.max(prev.currentHP - 15, 0);
+      if (newHP === 0) {
+        setIsModalOpen(true);
+        setModalMessage('You Win!');
+      }
       return { ...prev, currentHP: newHP };
     });
     setIsPlayerTurn(false);
@@ -56,6 +63,10 @@ const BattleScreen = () => {
     setPlayerBeingAttacked(true);
     setPlayer(prev => {
       const newHP = Math.max(prev.currentHP - 20, 0);
+      if (newHP === 0) {
+        setIsModalOpen(true);
+        setModalMessage('Game Over :(');
+      }
       return { ...prev, currentHP: newHP };
     });
     setTimeout(() => {
@@ -71,6 +82,10 @@ const BattleScreen = () => {
       return () => clearTimeout(opponentAttackTimeout);
     }
   }, [isPlayerTurn, player.currentHP, opponent.currentHP]);
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="page-container">
@@ -133,6 +148,11 @@ const BattleScreen = () => {
           </div>
         </div>
       </div>
+      <Modal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        message={modalMessage}
+      />
     </div>
   );
 };
