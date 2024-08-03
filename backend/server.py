@@ -55,8 +55,8 @@ def handle_queue_battle():
 @socketio.on('move')
 def handle_move(data):
     global current_turn
-    atk_stat = get_atk(player)
     player = data['player']
+    atk_stat = get_atk(player_map[player])
     move = data['move']
     dmg = random.randint(max(0,atk_stat - 10), atk_stat + 10)
     
