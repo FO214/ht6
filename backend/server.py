@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from db.main import add_plant, get_hp, get_data
+from db.main import add_plant, get_hp, get_data, get_atk
 from flask_cors import CORS
 from ai.agent import agent_executor
 from ai.vision import classify_plant, image_path_to_base64
@@ -36,24 +36,26 @@ def handle_queue_battle():
                 humidity, humidity2, brightness = get_hardware_data()
                 if humidity is None or humidity2 is None or brightness is None:
                     return jsonify({'error': 'Failed to read sensor data'}), 500
-
-                return jsonify({
-                    'humidity': humidity if usr=="P1" else humidity2,
+                
+                emit('init_curr_stats', {
+                    'humidity': humidity if player_number==1 else humidity2,
                     'brightness': brightness,
                     'timestamp': time.time()
-                }), 200
-            except Exception as e:
-                return jsonify({'error': str(e)}), 500
+                })
 
-            game_in_progress = True
-            emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
-            emit('your_turn', {'message': 'Your turn!'}, room=players[1]['sid'])
+                game_in_progress = True
+                emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
+                emit('your_turn', {'message': 'Your turn!'}, room=players[1]['sid'])
+            except Exception as e:
+                return e
 
 @socketio.on('move')
 def handle_move(data):
     global current_turn
+    atk_stat = get_atk(player)
     player = data['player']
     move = data['move']
+    dmg = random.randint(max(0,atk_stat - 10), atk_stat + 10)
     
     if not game_in_progress:
         emit('error', {'message': 'Game has not started yet'})
@@ -63,14 +65,13 @@ def handle_move(data):
         emit('error', {'message': 'Not your turn'})
         return
     
-    damage = random.randint(5, 20) #make the acc dmg
     opponent = 2 if player == 1 else 1
-    players[opponent]['health'] -= damage
+    players[opponent]['health'] -= dmg
     
     emit('move_result', {
         'player': player,
         'move': move,
-        'damage': damage,
+        'damage': dmg,
         'opponent_health': players[opponent]['health']
     }, broadcast=True)
     

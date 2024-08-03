@@ -30,7 +30,7 @@ def classify_plant(base64_image):
             "content": [
             {
                 "type": "text",
-                "text": "Here is a picture of a plant, please tell me what plant it is as well as describe the state of the plant, whether it looks dry, has scratches or marks, discolouration, and any other symptoms that mad point to a diagnosis, based on this health, as well as the plant's properties, give it a health point, attack, and defense stat, all ranging from 0-200, please reutrn the name, as well as the stats in json format, and only the json, don't include json markdown tags as well."
+                "text": "Here is a picture of a plant, please tell me what plant it is as well as describe the state of the plant, whether it looks dry, has scratches or marks, discolouration, and any other symptoms that mad point to a diagnosis, based on this health, as well as the plant's properties, give it a HP, ATK, and DEF stat, all ranging from 0-200, please reutrn the name, as well as the stats in json format, and only the json, don't include json markdown tags as well."
             },
             {
                 "type": "image_url",

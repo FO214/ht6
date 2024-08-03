@@ -28,6 +28,11 @@ def get_hp(id):
 
     return curr['plants'][0]["HP"]
 
+def get_atk(id):
+    curr = collection.find_one({"_id":id})
+
+    return curr['plants'][0]["ATK"]
+
 def add_plant(usr_id, plant):
     curr = collection.find_one({"_id": usr_id})
     curr["plants"].append(plant)
