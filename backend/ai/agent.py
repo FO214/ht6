@@ -8,7 +8,6 @@ from langchain.agents.format_scratchpad.openai_tools import (
     format_to_openai_tool_messages,
 )
 from langchain.agents.output_parsers.openai_tools import OpenAIToolsAgentOutputParser
-from ai.vision import get_item, image_path_to_base64
 import os
 
 # Load environment variables from .env file
