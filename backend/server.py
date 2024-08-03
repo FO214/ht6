@@ -33,10 +33,12 @@ def handle_queue_battle():
         if len(players) == 2:
             try:
                 # usr not used right now
-                humidity, humidity2, brightness = get_hardware_data()
+                # TODO: uncomment
+                # humidity, humidity2, brightness = get_hardware_data()
+                humidity, humidity2, brightness = 50, 50, 50
                 if humidity is None or humidity2 is None or brightness is None:
                     return jsonify({'error': 'Failed to read sensor data'}), 500
-                
+
                 emit('init_curr_stats', {
                     'humidity': humidity if player_number==1 else humidity2,
                     'brightness': brightness,
@@ -44,6 +46,7 @@ def handle_queue_battle():
                 })
 
                 game_in_progress = True
+                print('game_start')
                 emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
                 emit('your_turn', {'message': 'Your turn!'}, room=players[1]['sid'])
             except Exception as e:
