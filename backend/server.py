@@ -7,10 +7,14 @@ from arduino.read_serial import get_hardware_data
 app = Flask(__name__)
 CORS(app)
 
-
-@app.route('/sensor-data', methods=['GET'])
-def get_sensor_data():
+# return json of dimness and moistness
+@app.route("/battle-stats", methods=["GET"])
+def get_battle_stats():
     try:
+        data = request.get_json()
+        usr = data["user"]
+
+        # usr not used right now
         humidity, brightness = get_hardware_data()
 
         if humidity is not None and brightness is not None:
@@ -23,18 +27,6 @@ def get_sensor_data():
             return jsonify({'error': 'Failed to read sensor data'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-
-# return json of dimness and moistness
-@app.route("/battle-stats", methods=["GET"])
-def get_battle_stats():
-    try:
-        data = request.get_json()
-        usr = data["user"]
-
-
-    except Exception as e:
-        return e
 
 
 @app.route("/get-battle-update", methods=["GET"])
