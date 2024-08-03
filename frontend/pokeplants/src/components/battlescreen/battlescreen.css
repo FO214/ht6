@@ -3,7 +3,7 @@
   --light-green: #E2ECEC;
   --medium-green: #658f8c;
   --yellow: #f7f8d9;
-  --dark-yellow-green: #1f300d;
+  --dark-yellow-green: #939590;
   --grey-green: #546861;
   --light-grey: #f8f8f8;
 }
@@ -15,14 +15,16 @@ body{
   display: flex;
   flex-direction: column;
   font-family: 'VT323', monospace;
-  background-size: cover; 
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 73vh;
+  
+ 
 }
 
 .battle-bg {
-  background-image: url('bg3.png');
+  background-image: url('bg6.gif');
+  background-size: cover; 
+  background-position: center calc(50% + 40px);
+  background-repeat: no-repeat;
+  height: 60vh;
 }
 
 .battle-screen {
@@ -31,26 +33,33 @@ body{
 
   .player-plant {
     position: fixed;
-    bottom: 30%;
-    left: 10%;
+    bottom: 35%;
+    left: 25%;
+  }
+
+  .player-plant .plant-image{
+    width: auto;
+    height: 250px;
   }
   
   .opponent-plant {
     position: fixed;
-    top: -15%;
-    right: -1%;
+    top: -10%;
+    left: 65%;
   }
 
   #player-plant-info {
     position: relative;
-    bottom: -150px;
-    left: 350px;
+    top: 275px;
+    left: 450px;
+    color: var(--grey-green);
   }
 
   #opponent-plant-info {
     position: relative;
-    bottom: -150px;
-    right: 450px;
+    bottom: -110px;
+    right: 750px;
+    color: var(--grey-green);
   }
 
   .plant-info {
@@ -61,7 +70,7 @@ body{
     background-color: var(--yellow);
     padding: 10px;
     margin-bottom: 10px;
-    width: 300px;
+    width: 400px;
     border-top: 3px solid var(--grey-green);
     border-bottom: 3px solid var(--grey-green);
     box-shadow:
@@ -69,6 +78,31 @@ body{
       -8px 0 0 -4px var(--grey-green), 
       4px 0 0 -2px var(--grey-green),   
       8px 0 0 -4px var(--grey-green);
+  }
+
+  .player-plant .plant-info::before {
+    content: '';
+    position: absolute;
+    left: -30px; 
+    top: 15px; 
+    width: 3px;
+    height: 0;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-right: 25px solid var(--grey-green); 
+  }
+
+  .opponent-plant .plant-info::before {
+    content: '';
+    position: absolute;
+    right: -28px; 
+    top: 15px; 
+    width: 0; /* Set width to 0 */
+    height: 0; /* Set height to 0 */
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+    border-right: 25px solid var(--grey-green);
+    transform: scaleX(-1); /* Flip the triangle horizontally */
   }
 
   .plant-name-lvl {
@@ -85,7 +119,7 @@ body{
   }
 
   .health-bar {
-    width: 100%;
+    width: 95%;
     height: 10px;
     background-color: var(--light-green);
     border: 1px solid #000;
@@ -99,13 +133,17 @@ body{
   }
   
   .health {
-    width: 70%;
+    width: 10%;
     height: 100%;
     background-color: #4caf50;
   }
 
   .hp-status {
     display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 95%;
+    gap: 20px;
   }
   
   .status {
@@ -140,20 +178,27 @@ body{
   .actions button {
     display: flex;
     flex: 1 1;
-    margin: 5px;
+    margin: 10px;
     padding: 20px 30px;
     border-radius: 5px;
     cursor: pointer;
     font-family: 'VT323', monospace;
-    background-color: transparent;
+    background-color: var(--light-grey);
     border: none;
     font-size: 30px;
     color: #4b4b49;
-    border: 2px solid transparent;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
   }
   
   .actions button:hover {
-    border: 2px solid #ad7a78;
+    border-top: 3px solid #ad7a78;
+    border-bottom: 3px solid #ad7a78;
+    box-shadow:
+      -4px 0 0 -2px #ad7a78,   
+      -8px 0 0 -4px #ad7a78, 
+      4px 0 0 -2px #ad7a78,   
+      8px 0 0 -4px #ad7a78;
   }
   
   .status {
@@ -162,7 +207,5 @@ body{
     border: 4px solid #464645; 
     box-shadow: 4px 4px 0 #505055, 
                 8px 8px 0 #6f6589; 
-  }
-  
-
+  }  
   
