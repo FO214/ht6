@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import socket from "../../socket"; // Assuming this is the socket initialization
 import './battlescreen.css';
-import socket from "../../socket"
 
-const BattleScreen = () => {
+const BattleScreen = ({ selectedPlant }) => {
   const [player, setPlayer] = useState({
-    name: 'Inch Plant',
-    level: 25,
-    maxHP: 122,
-    currentHP: 122
+    name: selectedPlant?.name || 'Inch Plant',
+    level: selectedPlant?.level || 25,
+    maxHP: selectedPlant?.maxHP || 122,
+    currentHP: selectedPlant?.currentHP || 122
   });
 
   const [opponent, setOpponent] = useState({
@@ -18,6 +17,7 @@ const BattleScreen = () => {
     currentHP: 122
   });
 
+  const [status, setStatus] = useState({});
   const [attacking, setAttacking] = useState(false);
 
   useEffect(() => {
@@ -28,17 +28,12 @@ const BattleScreen = () => {
   }, []);
 
   useEffect(() => {
-
     socket.on('player_assignment', (data) => {
       console.log(`Assigned player: ${data.player}`);
     });
 
     socket.on('init_curr_stats', (data) => {
-      console.log(`Initial stats:`, data);
-    });
-
-    socket.on('game_start', (data) => {
-      console.log(data.message);
+      setStatus(data);
     });
 
     socket.on('your_turn', (data) => {
@@ -69,10 +64,8 @@ const BattleScreen = () => {
     });
 
     return () => {
-      socket.off('connect');
       socket.off('player_assignment');
       socket.off('init_curr_stats');
-      socket.off('game_start');
       socket.off('your_turn');
       socket.off('move_result');
       socket.off('game_over');
