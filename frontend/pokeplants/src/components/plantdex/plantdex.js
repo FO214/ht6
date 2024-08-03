@@ -1,17 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './plantdex.css';
 
 const plants = ['Plant 1', 'Plant 2', 'Plant 3'];
 
 const Plantdex = () => {
-  const [selectedPlant, setSelectedPlant] = useState(null);
+  useEffect(() => {
+    document.body.classList.add('plant-bg');
+    return () => {
+      document.body.classList.remove('plant-bg');
+    };
+  }, []);
+
+  const [selectedPlant, setSelectedPlant] = useState(plants[0]); // Automatically select the first plant
+  const [showInfo, setShowInfo] = useState(false);
+  const [infoHighlighted, setInfoHighlighted] = useState(false);
+
+  useEffect(() => {
+    // Ensure the first plant is selected on mount
+    setSelectedPlant(plants[0]);
+  }, []);
 
   const handlePlantClick = (plant) => {
     setSelectedPlant(plant);
+    setShowInfo(false);
+    setInfoHighlighted(false);
+  };
+
+  const handleInfoClick = () => {
+    if (showInfo) {
+      setShowInfo(false);
+      setInfoHighlighted(false);
+    } else {
+      setShowInfo(true);
+      setInfoHighlighted(true);
+    }
   };
 
   const handleBackClick = () => {
     setSelectedPlant(null);
+    setShowInfo(false);
+    setInfoHighlighted(false);
   };
 
   return (
@@ -20,23 +48,31 @@ const Plantdex = () => {
       <div className="content">
         <div className="sidebar">
           <div className="toggle-buttons">
-            <button onClick={handleBackClick}>list of plants</button>
-            <button disabled={!selectedPlant}>info</button>
+            {}
+            <button 
+              onClick={handleInfoClick} 
+              disabled={!selectedPlant}
+              className={infoHighlighted ? 'highlighted' : ''}
+            >
+              INFO
+            </button>
           </div>
-          {!selectedPlant ? (
+          {showInfo && selectedPlant ? (
+            <div className="plant-info-text">
+              <p>{`Information about ${selectedPlant}`}</p>
+              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget augue eu lacus commodo sodales. Sed at dui in orci egestas vehicula.</p>
+            </div>
+          ) : (
             <div className="plant-list">
               {plants.map((plant, index) => (
                 <div 
                   key={index} 
-                  className="plant-circle" 
+                  className={`plant-circle ${selectedPlant === plant ? 'selected' : ''}`} 
                   onClick={() => handlePlantClick(plant)}
-                ></div>
+                >
+                  {plant}
+                </div>
               ))}
-            </div>
-          ) : (
-            <div className="plant-care-info">
-              <p>blah blah blah insert info here</p>
-              <p>info blah blah blah</p>
             </div>
           )}
         </div>
@@ -44,7 +80,7 @@ const Plantdex = () => {
           {selectedPlant && (
             <>
               <div className="plant-img"></div>
-              <p className="plant-caption">blah blah blah insert info here</p>
+              <p className="plant-caption">Caption for {selectedPlant}</p>
             </>
           )}
         </div>

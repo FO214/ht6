@@ -7,8 +7,8 @@ def setup_serial(port='COM4', baud_rate=9600):
 def read_sensor_data(ser):
     try:
         line = ser.readline().decode('utf-8').strip()
-        humidity, brightness = map(int, line.split(','))
-        return humidity, brightness
+        humidity, humidity2, brightness = map(int, line.split(','))
+        return humidity, humidity2, brightness
     except ValueError:
         print("Error reading sensor data")
         return None, None

@@ -15,16 +15,15 @@ def get_battle_stats():
         usr = data["user"]
 
         # usr not used right now
-        humidity, brightness = get_hardware_data()
-
-        if humidity is not None and brightness is not None:
-            return jsonify({
-                'humidity': humidity,
-                'brightness': brightness,
-                'timestamp': time.time()
-            }), 200
-        else:
+        humidity, humidity2, brightness = get_hardware_data()
+        if humidity is None or humidity2 is None or brightness is None:
             return jsonify({'error': 'Failed to read sensor data'}), 500
+
+        return jsonify({
+            'humidity': humidity if usr=="P1" else humidity2,
+            'brightness': brightness,
+            'timestamp': time.time()
+        }), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
