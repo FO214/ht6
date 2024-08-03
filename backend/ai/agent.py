@@ -48,8 +48,3 @@ agent = (
 )
 
 agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
-
-path = "/Users/fahmiomer/tester/plant2.png"
-state = get_item(image_path_to_base64(path))
-
-print(agent_executor.invoke({"input":state}))
