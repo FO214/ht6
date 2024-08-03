@@ -48,8 +48,3 @@ def get_item(base64_image):
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
     return json.loads(response.json()['choices'][0]['message']['content'])
-
-
-path = "/Users/fahmiomer/tester/aloe.png"
-#cont = "/Users/fahmiomer/tester/health.png"
-print(get_item(image_path_to_base64(path)))

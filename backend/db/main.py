@@ -21,7 +21,10 @@ def update(id, dmg):
 
     return curr
 
+def get_data(id):
+    return collection.find_one({"_id":id})['plants'][0]
+
 def get_hp(id):
     curr = collection.find_one({"_id":id})
-    
+
     return curr['plants'][0]["CURR_HP"]
