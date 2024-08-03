@@ -52,6 +52,10 @@ def attack_plant():
     except Exception as e:
         return e
 
+#webcam
+
+#feedback
+#return {"name":fds}
 
 
 if __name__ == '__main__':
