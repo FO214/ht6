@@ -49,4 +49,40 @@ def classify_plant(base64_image):
 
     return json.loads(response.json()['choices'][0]['message']['content'])
 
-print(get_item(image_path_to_base64("test.png")))
+
+
+def diagnose_plant(base64_image):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+
+    payload = {
+        "model": "gpt-4o",
+        "messages": [
+        {
+            "role": "user",
+            "content": [
+            {
+                "type": "text",
+                "text": "Here is a picture of a plant, please tell me what plant it is as well as describe the state of the plant, how dry it may be, any discolouration, as well as any cuts or damage you may see on the plant, describe it all."
+            },
+            {
+                "type": "image_url",
+                "image_url": {
+                "url": f"data:image/jpeg;base64,{base64_image}"
+                }
+            }
+            ]
+        }
+        ],
+        "max_tokens": 300
+    }
+
+
+    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+
+    return json.loads(response.json()['choices'][0]['message']['content'])
+
+
+#print(get_item(image_path_to_base64("test.png")))

@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from db.main import add_plant, get_hp, get_data, get_atk
 from flask_cors import CORS
 from ai.agent import agent_executor
-from ai.vision import classify_plant, image_path_to_base64
+from ai.vision import classify_plant, image_path_to_base64, diagnose_plant
 from flask_socketio import SocketIO, emit
 import random
 import time
@@ -121,7 +121,11 @@ def feedback():
         res['brightness'] = brightness
         res['moist'] = humidity if usr == "P1" else humidity2
 
-        response = agent_executor.invoke({"input":f"given this plant's current brightness, {brightness}% and the current soil moisture level, {res['moist']}%, give some feedback to this plant owner on what they brightness and moistness they should aim for, also give 2 tips on what they can do better to keep their plant healthies, and finally, a fun fact about the plant type, and return it in a json looking like the following, feedback:, care:, facts, ONLY return the json, not even markdown identifiers."})
+        get_camera_image()
+        time.sleep(1)
+        health = diagnose_plant(image_path_to_base64("./arduino/snapshot.png"))
+
+        response = agent_executor.invoke({"input":f"given this plant's current brightness, {brightness}%, the current soil moisture level, {res['moist']}%, and current overall health, {health} give some feedback to this plant owner on what they brightness and moistness they should aim for as well as treatment recommendations, also give 2 tips on what they can do better to keep their plant healthies, and finally, a fun fact about the plant type, and return it in a json looking like the following, feedback:, care:, fact:, ONLY return the json, not even markdown identifiers."})
 
         return jsonify({**res, **response})
 
