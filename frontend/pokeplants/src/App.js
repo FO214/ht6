@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import AuthButton from './components/authbutton/authbutton';
 import BattleScreen from './components/battlescreen/battlescreen';
 import Plantdex from './components/plantdex/plantdex';
+import Modal from './components/modal/modal';
 import './App.css';
 
 const App = () => {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const navigate = useNavigate();
   const [initialRedirect, setInitialRedirect] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [plants, setPlants] = useState([]);
+  const [selectedPlant, setSelectedPlant] = useState(null);
+  const [isLoadingScreen, setIsLoadingScreen] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
     if (isAuthenticated && initialRedirect) {
@@ -18,9 +24,24 @@ const App = () => {
     }
   }, [isAuthenticated, initialRedirect, navigate]);
 
+  useEffect(() => {
+    // Simulate fetching plant data
+    setPlants(['Plant 1', 'Plant 2', 'Plant 3']);
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (isLoadingScreen) {
+      timer = setInterval(() => {
+        setElapsedTime(prev => prev + 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [isLoadingScreen]);
+
   const handleStartBattle = () => {
     if (isAuthenticated) {
-      navigate('/battle');
+      setIsModalOpen(true);
     } else {
       loginWithRedirect({
         appState: { targetUrl: '/battle' }
@@ -38,6 +59,24 @@ const App = () => {
     }
   };
 
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setIsLoadingScreen(false);
+    setElapsedTime(0);
+  };
+
+  const handleSelectPlant = (plant) => {
+    setSelectedPlant(plant);
+    setElapsedTime(0);
+    setIsLoadingScreen(true);
+    setIsModalOpen(true);
+    setTimeout(() => {
+      setIsModalOpen(false);
+      navigate('/battle');
+    }, 10000);
+  };
+  
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -47,9 +86,17 @@ const App = () => {
       <AuthButton />
       <Routes>
         <Route path="/" element={<Home handleGoToPlantdex={handleGoToPlantdex} handleStartBattle={handleStartBattle} />} />
-        <Route path="/battle" element={<BattleScreen />} />
+        <Route path="/battle" element={<BattleScreen selectedPlant={selectedPlant} />} />
         <Route path="/plantdex" element={<Plantdex />} />
       </Routes>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        plants={plants}
+        onSelectPlant={handleSelectPlant}
+        isLoadingScreen={isLoadingScreen}
+        elapsedTime={elapsedTime}
+      />
     </div>
   );
 };

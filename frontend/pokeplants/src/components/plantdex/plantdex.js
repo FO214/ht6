@@ -6,7 +6,7 @@ const plants = ['Plant 1', 'Plant 2', 'Plant 3'];
 
 const Plantdex = () => {
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     document.body.classList.add('plant-bg');
     return () => {
@@ -50,7 +50,7 @@ const Plantdex = () => {
 
   return (
     <div className="plantdex-container">
-      <button className="home-button" onClick={handleHomeClick}>HOME</button> {/* Updated button */}
+      <button className="home-button" onClick={handleHomeClick}>HOME</button>
       <h1>PLANTDEX</h1>
       <div className="content">
         <div className="sidebar">
