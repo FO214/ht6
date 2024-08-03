@@ -15,8 +15,6 @@ body{
   display: flex;
   flex-direction: column;
   font-family: 'VT323', monospace;
-  
- 
 }
 
 .battle-bg {
@@ -145,6 +143,47 @@ body{
     width: 95%;
     gap: 20px;
   }
+
+
+.hp-green .health {
+  background-color: #4caf50;
+}
+
+.hp-yellow .health {
+  background-color: #ffeb3b;
+}
+
+.hp-red .health {
+  background-color: #f44336;
+}
+
+.opponent-plant-battler.attacking .plant-image {
+  animation: flash 0.3s ease-in-out;
+}
+
+@keyframes flash {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(10); }
+  100% { filter: brightness(1); }
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0); }
+  0% { opacity: 50%; }
+  50% { opacity: 75%; }
+  100% { opacity: 50%; }
+}
+
+@keyframes fainted {
+  0%, 5%, 15%, 25%, 35%, 45%, 55%, 65%, 75%, 85%, 95% { opacity: 1; }
+  10%, 20%, 30%, 40%, 50%, 60%, 70%, 80%, 90%, 100%{ opacity: 0; }
+  105%, 120% { opacity: 1; }
+  125%, 140%, 145%, 150%, 155%, 160%, 165% { opacity: 0; }
+  170%, 200% { opacity: 0; }
+}
+
+.fainted {
+  animation: fainted 2.5s ease-in-out forwards;
+}
   
   .status {
     display: flex;
