@@ -188,3 +188,19 @@ h1 {
       4px 0 0 -2px var(--dark-green),   
       8px 0 0 -4px var(--dark-green);
 }
+
+.add-plant-circle {
+    width: 80px;
+    height: 80px;
+    background-color: var(--dark-green);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+    border: 4px solid var(--medium-green);
+    font-size: 30px;
+    font-family: 'VT323', monospace;
+    color: var(--light-green);
+}
