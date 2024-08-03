@@ -74,7 +74,7 @@ h1 {
     cursor: pointer;
 }
 
-.plant-info {
+.plant-care-info {
     margin-top: 20px;
     color: var(--light-green);
     font-family: 'VT323', monospace;
@@ -89,7 +89,7 @@ h1 {
     justify-content: center;
 }
 
-.plant-image {
+.plant-img {
     width: 150px;
     height: 150px;
     background-color: var(--light-green);

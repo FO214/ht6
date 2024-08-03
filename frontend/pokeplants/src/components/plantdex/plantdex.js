@@ -34,7 +34,7 @@ const Plantdex = () => {
               ))}
             </div>
           ) : (
-            <div className="plant-info">
+            <div className="plant-care-info">
               <p>blah blah blah insert info here</p>
               <p>info blah blah blah</p>
             </div>
@@ -43,7 +43,7 @@ const Plantdex = () => {
         <div className="main">
           {selectedPlant && (
             <>
-              <div className="plant-image"></div>
+              <div className="plant-img"></div>
               <p className="plant-caption">blah blah blah insert info here</p>
             </>
           )}
