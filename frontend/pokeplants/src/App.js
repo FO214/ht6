@@ -28,7 +28,7 @@ const App = () => {
   useEffect(() => {
     // Simulate fetching plant data
     setPlants(['Plant 1', 'Plant 2', 'Plant 3']);
-    socket.on('player_assignment', () => {
+    socket.on('game_start', () => {
       setIsModalOpen(false);
       navigate('/battle');
     });
