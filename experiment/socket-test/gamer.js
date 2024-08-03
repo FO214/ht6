@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 const readline = require('readline');
 
-const socket = io('http://100.67.6.78:5000/');
+const socket = io('http://100.67.199.31:5001');
 
 let player = null;
 let myHealth = 100;
