@@ -1,27 +1,28 @@
 from flask import Flask, jsonify, request
-from db.main import update, get_hp, get_data
+from db.main import add_plant, get_hp, get_data
 from flask_cors import CORS
 from ai.agent import agent_executor
-from ai.vision import get_item
+from ai.vision import classify_plant, image_path_to_base64
 from flask_socketio import SocketIO, emit
 import random
 import time
 from arduino.read_serial import get_hardware_data
+from arduino.webcam import get_camera_image
 
 app = Flask(__name__)
 CORS(app)
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-player_map = {1:"P1", 2:"P2"}
+player_map = {1:"rubylu12345@gmail.com", 2:"sabrinawang93@gmail.com"}
 players = {}
 
 
 current_turn = 1
 game_in_progress = False
 
-@socketio.on('connect')
-def handle_connect():
+@socketio.on('queue_battle')
+def handle_queue_battle():
     global players, game_in_progress
     if len(players) < 2:
         player_number = len(players) + 1
@@ -30,6 +31,20 @@ def handle_connect():
         emit('player_assignment', {'player': player_map[player_number]})
         
         if len(players) == 2:
+            try:
+                # usr not used right now
+                humidity, humidity2, brightness = get_hardware_data()
+                if humidity is None or humidity2 is None or brightness is None:
+                    return jsonify({'error': 'Failed to read sensor data'}), 500
+
+                return jsonify({
+                    'humidity': humidity if usr=="P1" else humidity2,
+                    'brightness': brightness,
+                    'timestamp': time.time()
+                }), 200
+            except Exception as e:
+                return jsonify({'error': str(e)}), 500
+
             game_in_progress = True
             emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
             emit('your_turn', {'message': 'Your turn!'}, room=players[1]['sid'])
@@ -83,27 +98,17 @@ def handle_disconnect():
     reset_game()
     print('Player disconnected')
 
-
-# return json of dimness and moistness
-@app.route("/battle-stats", methods=["POST"])
-def get_battle_stats():
+@app.route("/create-pokeplant", methods=["POST"])
+def create_pokeplant():
     try:
         data = request.get_json()
-        usr = data["user"]
-
-        # usr not used right now
-        humidity, humidity2, brightness = get_hardware_data()
-        if humidity is None or humidity2 is None or brightness is None:
-            return jsonify({'error': 'Failed to read sensor data'}), 500
-
-        return jsonify({
-            'humidity': humidity if usr=="P1" else humidity2,
-            'brightness': brightness,
-            'timestamp': time.time()
-        }), 200
+        usr_id = data["user"]
+        get_camera_image()
+        time.sleep(1)
+        plant = classify_plant(image_path_to_base64("./arduino/snapshot.png"))
+        add_plant(usr_id, plant)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route("/plant-profile", methods=["POST"])
 def feedback():

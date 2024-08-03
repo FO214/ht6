@@ -16,7 +16,7 @@ def image_path_to_base64(image_path):
         return base64_message
 
 
-def get_item(base64_image):
+def classify_plant(base64_image):
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {api_key}"
@@ -48,3 +48,5 @@ def get_item(base64_image):
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
     return json.loads(response.json()['choices'][0]['message']['content'])
+
+print(get_item(image_path_to_base64("test.png")))
