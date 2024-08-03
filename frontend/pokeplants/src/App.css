@@ -1,39 +1,33 @@
-.App {
-  text-align: center;
-  font-family: 'VT323';
+body {
+  background-image: url('./components/plantdex/bg.jpeg');
+  height: 130vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.title {
+  font-size: 200px;
+  margin-bottom: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.starting-buttons button {
+  font-size: 16px;
+  border: none;
+  background-color: var(--dark-green);
+  font-family: 'VT323', monospace;
+  color: var(--light-green);
+  cursor: pointer;
+  font-size: 40px;
+  padding: 5px 10px;  
+  border-top: 3px solid var(--dark-green);
+  border-bottom: 3px solid var(--dark-green);
+  box-shadow:
+    -4px 0 0 -2px var(--dark-green),   
+    -8px 0 0 -4px var(--dark-green), 
+    4px 0 0 -2px var(--dark-green),   
+    8px 0 0 -4px var(--dark-green);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.starting-buttons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  gap: 30px;
 }

@@ -1,0 +1,28 @@
+:root {
+    --dark-green: #174B42;
+    --light-green: #E2ECEC;
+    --medium-green: #658f8c;
+}
+
+.auth-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 16px;
+    border: none;
+    background-color: var(--dark-green);
+    font-family: 'VT323', monospace;
+    color: var(--light-green);
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px 10px;
+    z-index: 10000;
+    border-top: 3px solid var(--dark-green);
+    border-bottom: 3px solid var(--dark-green);
+    box-shadow:
+      -4px 0 0 -2px var(--dark-green),   
+      -8px 0 0 -4px var(--dark-green), 
+      4px 0 0 -2px var(--dark-green),   
+      8px 0 0 -4px var(--dark-green);
+}
+  

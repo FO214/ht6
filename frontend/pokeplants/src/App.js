@@ -4,16 +4,17 @@ import { useAuth0 } from '@auth0/auth0-react';
 import AuthButton from './components/authbutton/authbutton';
 import BattleScreen from './components/battlescreen/battlescreen';
 import Plantdex from './components/plantdex/plantdex';
+import './App.css';
 
 const App = () => {
-  const { isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
   const navigate = useNavigate();
   const [initialRedirect, setInitialRedirect] = useState(true);
 
   useEffect(() => {
     if (isAuthenticated && initialRedirect) {
       setInitialRedirect(false);
-      navigate('/plantdex');
+      navigate('/');
     }
   }, [isAuthenticated, initialRedirect, navigate]);
 
@@ -21,7 +22,19 @@ const App = () => {
     if (isAuthenticated) {
       navigate('/battle');
     } else {
-      navigate('/login');
+      loginWithRedirect({
+        appState: { targetUrl: '/battle' }
+      });
+    }
+  };
+
+  const handleGoToPlantdex = () => {
+    if (isAuthenticated) {
+      navigate('/plantdex');
+    } else {
+      loginWithRedirect({
+        appState: { targetUrl: '/plantdex' }
+      });
     }
   };
 
@@ -32,9 +45,8 @@ const App = () => {
   return (
     <div className="App">
       <AuthButton />
-      <button onClick={handleStartBattle}>Start Battle</button>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home handleGoToPlantdex={handleGoToPlantdex} handleStartBattle={handleStartBattle} />} />
         <Route path="/battle" element={<BattleScreen />} />
         <Route path="/plantdex" element={<Plantdex />} />
       </Routes>
@@ -42,8 +54,16 @@ const App = () => {
   );
 };
 
-const Home = () => {
-  return <h1>Home Screen</h1>;
+const Home = ({ handleGoToPlantdex, handleStartBattle }) => {
+  return (
+    <div>
+      <h1 className="title">POKÉPLANTS</h1>
+      <div className="starting-buttons">
+        <button onClick={handleGoToPlantdex}>GO TO PLANTDEX</button>
+        <button onClick={handleStartBattle}>START BATTLING</button>
+      </div>
+    </div>
+  );
 };
 
 export default App;

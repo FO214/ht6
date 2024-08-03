@@ -2,7 +2,6 @@
     --dark-green: #174B42;
     --light-green: #E2ECEC;
     --medium-green: #658f8c;
-    --highlight-yellow: #FFD700;
 }
 
 body {
@@ -13,7 +12,7 @@ body {
 
 .plant-bg {
     background-image: url('bg.jpeg');
-    height: 100vh;
+    height: 130vh;
 }
 
 h1 {
@@ -33,7 +32,13 @@ h1 {
     width: 50%;
     background-color: var(--dark-green);
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-top: 3px solid var(--dark-green);
+    border-bottom: 3px solid var(--dark-green);
+    box-shadow:
+      -4px 0 0 -2px var(--dark-green),   
+      -8px 0 0 -4px var(--dark-green), 
+      4px 0 0 -2px var(--dark-green),   
+      8px 0 0 -4px var(--dark-green);
 }
 
 .sidebar {
@@ -44,6 +49,13 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-top: 3px solid var(--medium-green);
+    border-bottom: 3px solid var(--medium-green);
+    box-shadow:
+      -4px 0 0 -2px var(--medium-green),   
+      -8px 0 0 -4px var(--medium-green), 
+      4px 0 0 -2px var(--medium-green),   
+      8px 0 0 -4px var(--medium-green);
 }
 
 .toggle-buttons {
@@ -62,20 +74,37 @@ h1 {
     border: none;
     cursor: pointer;
     font-size: 20px;
-    color: var(--dark-green);
-    border: 2px solid var(--dark-green);
+    border-top: 3px solid var(--dark-green);
+    border-bottom: 3px solid var(--dark-green);
+    box-shadow:
+      -4px 0 0 -2px var(--dark-green),   
+      -8px 0 0 -4px var(--dark-green), 
+      4px 0 0 -2px var(--dark-green),   
+      8px 0 0 -4px var(--dark-green);
 }
 
 .toggle-buttons button:disabled {
     cursor: default;
     color: var(--dark-green);
-    border: 2px solid var(--dark-green);
+    border-top: 3px solid var(--dark-green);
+    border-bottom: 3px solid var(--dark-green);
+    box-shadow:
+      -4px 0 0 -2px var(--dark-green),   
+      -8px 0 0 -4px var(--dark-green), 
+      4px 0 0 -2px var(--dark-green),   
+      8px 0 0 -4px var(--dark-green);
 }
 
 .toggle-buttons button.highlighted {
     color: var(--light-green);
     background-color: var(--dark-green);
-    border: 2px solid var(--dark-green);
+    border-top: 3px solid var(--dark-green);
+    border-bottom: 3px solid var(--dark-green);
+    box-shadow:
+      -4px 0 0 -2px var(--dark-green),   
+      -8px 0 0 -4px var(--dark-green), 
+      4px 0 0 -2px var(--dark-green),   
+      8px 0 0 -4px var(--dark-green);
 }
 
 .plant-list {
@@ -136,4 +165,26 @@ h1 {
     color: var(--light-green);
     font-family: 'VT323', monospace;
     font-size: 20px;
+}
+
+.home-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    font-size: 16px;
+    border: none;
+    background-color: var(--dark-green);
+    font-family: 'VT323', monospace;
+    color: var(--light-green);
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px 10px;
+    z-index: 10000;
+    border-top: 3px solid var(--dark-green);
+    border-bottom: 3px solid var(--dark-green);
+    box-shadow:
+      -4px 0 0 -2px var(--dark-green),   
+      -8px 0 0 -4px var(--dark-green), 
+      4px 0 0 -2px var(--dark-green),   
+      8px 0 0 -4px var(--dark-green);
 }
