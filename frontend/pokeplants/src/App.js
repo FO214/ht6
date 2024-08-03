@@ -6,6 +6,7 @@ import BattleScreen from './components/battlescreen/battlescreen';
 import Plantdex from './components/plantdex/plantdex';
 import Modal from './components/modal/modal';
 import './App.css';
+import socket from './socket';
 
 const App = () => {
   const { isAuthenticated, isLoading, loginWithRedirect } = useAuth0();
@@ -27,6 +28,10 @@ const App = () => {
   useEffect(() => {
     // Simulate fetching plant data
     setPlants(['Plant 1', 'Plant 2', 'Plant 3']);
+    socket.on('game_start', () => {
+      setIsModalOpen(false);
+      navigate('/battle');
+    });
   }, []);
 
   useEffect(() => {
@@ -42,6 +47,7 @@ const App = () => {
   const handleStartBattle = () => {
     if (isAuthenticated) {
       setIsModalOpen(true);
+      setElapsedTime(0);
     } else {
       loginWithRedirect({
         appState: { targetUrl: '/battle' }
@@ -70,10 +76,7 @@ const App = () => {
     setElapsedTime(0);
     setIsLoadingScreen(true);
     setIsModalOpen(true);
-    setTimeout(() => {
-      setIsModalOpen(false);
-      navigate('/battle');
-    }, 10000);
+    socket.emit('queue_battle');
   };
   
 
