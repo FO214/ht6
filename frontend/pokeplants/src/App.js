@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 import AuthButton from './components/authbutton/authbutton';
-import BattleScreen from './components/battlescreen/battlescreen';
 import Plantdex from './components/plantdex/plantdex';
 import Modal from './components/modal/modal';
+import BattleScreen from './components/battlescreen/battlescreen';
 import './App.css';
 import socket from './socket';
 
@@ -17,6 +17,7 @@ const App = () => {
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [isLoadingScreen, setIsLoadingScreen] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [isBattleScreenVisible, setIsBattleScreenVisible] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated && initialRedirect) {
@@ -30,7 +31,7 @@ const App = () => {
     setPlants(['Plant 1', 'Plant 2', 'Plant 3']);
     socket.on('game_start', () => {
       setIsModalOpen(false);
-      navigate('/battle');
+      setIsBattleScreenVisible(true);
     });
   }, []);
 
@@ -69,6 +70,7 @@ const App = () => {
     setIsModalOpen(false);
     setIsLoadingScreen(false);
     setElapsedTime(0);
+    setIsBattleScreenVisible(false);
   };
 
   const handleSelectPlant = (plant) => {
@@ -78,7 +80,6 @@ const App = () => {
     setIsModalOpen(true);
     socket.emit('queue_battle');
   };
-  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -87,11 +88,14 @@ const App = () => {
   return (
     <div className="App">
       <AuthButton />
-      <Routes>
-        <Route path="/" element={<Home handleGoToPlantdex={handleGoToPlantdex} handleStartBattle={handleStartBattle} />} />
-        <Route path="/battle" element={<BattleScreen selectedPlant={selectedPlant} />} />
-        <Route path="/plantdex" element={<Plantdex />} />
-      </Routes>
+      {!isBattleScreenVisible ? (
+        <Routes>
+          <Route path="/" element={<Home handleGoToPlantdex={handleGoToPlantdex} handleStartBattle={handleStartBattle} />} />
+          <Route path="/plantdex" element={<Plantdex />} />
+        </Routes>
+      ) : (
+        <BattleScreen selectedPlant={selectedPlant} />
+      )}
       <Modal
         isOpen={isModalOpen}
         onClose={handleModalClose}
