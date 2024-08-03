@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './plantdex.css';
 
 const plants = ['Plant 1', 'Plant 2', 'Plant 3'];
 
 const Plantdex = () => {
+  const navigate = useNavigate();
+  
   useEffect(() => {
     document.body.classList.add('plant-bg');
     return () => {
@@ -11,12 +14,11 @@ const Plantdex = () => {
     };
   }, []);
 
-  const [selectedPlant, setSelectedPlant] = useState(plants[0]); // Automatically select the first plant
+  const [selectedPlant, setSelectedPlant] = useState(plants[0]);
   const [showInfo, setShowInfo] = useState(false);
   const [infoHighlighted, setInfoHighlighted] = useState(false);
 
   useEffect(() => {
-    // Ensure the first plant is selected on mount
     setSelectedPlant(plants[0]);
   }, []);
 
@@ -42,19 +44,23 @@ const Plantdex = () => {
     setInfoHighlighted(false);
   };
 
+  const handleHomeClick = () => {
+    navigate('/');
+  };
+
   return (
     <div className="plantdex-container">
+      <button className="home-button" onClick={handleHomeClick}>HOME</button> {/* Updated button */}
       <h1>PLANTDEX</h1>
       <div className="content">
         <div className="sidebar">
           <div className="toggle-buttons">
-            {}
             <button 
               onClick={handleInfoClick} 
               disabled={!selectedPlant}
               className={infoHighlighted ? 'highlighted' : ''}
             >
-              INFO
+              {showInfo ? 'HIDE INFO' : 'SHOW INFO'}
             </button>
           </div>
           {showInfo && selectedPlant ? (
