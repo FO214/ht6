@@ -8,21 +8,21 @@
   --light-grey: #f8f8f8;
 }
 
-.page-container {
+body{
   height: 100%;
   width: 100%;
+  margin: 0;
   display: flex;
   flex-direction: column;
+  font-family: 'VT323', monospace;
+  background-image: url('bg3.png');
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 73vh;
 }
 
 .battle-screen {
-    background-color: #f0f8ff;
-    border: 2px solid #ccc;
-    border-radius: 10px;
-    background-image: url('bg3.png');
-    background-size: cover; 
-    background-position: bottom; 
-    background-repeat: no-repeat;
     height: 70vh;
   }
 
@@ -34,8 +34,8 @@
   
   .opponent-plant {
     position: fixed;
-    top: -8%;
-    right: 3%;
+    top: -15%;
+    right: -1%;
   }
 
   #player-plant-info {
@@ -47,19 +47,33 @@
   #opponent-plant-info {
     position: relative;
     bottom: -150px;
-    right: 400px;
+    right: 450px;
   }
 
   .plant-info {
     display: flex;
     flex-direction: column;
+    gap: 20px;
     align-items: center;
     background-color: var(--yellow);
-    border: 3px solid var(--dark-yellow-green);
     padding: 10px;
-    border-radius: 5px;
     margin-bottom: 10px;
-    width: 250px;
+    width: 300px;
+    border-top: 3px solid var(--grey-green);
+    border-bottom: 3px solid var(--grey-green);
+    box-shadow:
+      -4px 0 0 -2px var(--grey-green),   
+      -8px 0 0 -4px var(--grey-green), 
+      4px 0 0 -2px var(--grey-green),   
+      8px 0 0 -4px var(--grey-green);
+  }
+
+  .plant-name-lvl {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    font-size: 22px;
   }
 
   .plant-image {
@@ -68,10 +82,17 @@
   }
 
   .health-bar {
-    width: 100px;
+    width: 100%;
     height: 10px;
-    background-color: #ffcccb;
+    background-color: var(--light-green);
     border: 1px solid #000;
+    border-top: 3px solid var(--grey-green);
+    border-bottom: 3px solid var(--grey-green);
+    box-shadow:
+      -4px 0 0 -2px var(--grey-green),   
+      -8px 0 0 -4px var(--grey-green), 
+      4px 0 0 -2px var(--grey-green),   
+      8px 0 0 -4px var(--grey-green);
   }
   
   .health {
@@ -79,24 +100,9 @@
     height: 100%;
     background-color: #4caf50;
   }
-  
-  .actions {
+
+  .hp-status {
     display: flex;
-    justify-content: center;
-    margin: 20px;
-  }
-  
-  .actions button {
-    margin: 5px;
-    padding: 10px 20px;
-    background-color: #98fb98;
-    border: 1px solid #000;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .actions button:hover {
-    background-color: #90ee90;
   }
   
   .status {
@@ -107,5 +113,53 @@
   }
   
   .attack-screen {
-    height: 30%;
+    height: calc(30vh - 30px);
+    background-color: var(--light-grey);
+    border: 4px solid #464645; 
+    box-shadow: 4px 4px 0 #505055, 
+                8px 8px 0 #6f6589; 
+    display: flex;
+    width: calc(100% - 10px);
   }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 70%;
+    justify-content: space-evenly;
+    border: 4px solid #464645; 
+    box-shadow: 4px 4px 0 #505055, 
+                8px 8px 0 #6f6589; 
+  }
+  
+  .actions button {
+    display: flex;
+    flex: 1 1;
+    margin: 5px;
+    padding: 20px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    background-color: transparent;
+    border: none;
+    font-size: 30px;
+    color: #4b4b49;
+    border: 2px solid transparent;
+  }
+  
+  .actions button:hover {
+    border: 2px solid #ad7a78;
+  }
+  
+  .status {
+    margin: 0;
+    width: 30%;
+    border: 4px solid #464645; 
+    box-shadow: 4px 4px 0 #505055, 
+                8px 8px 0 #6f6589; 
+  }
+  
+
+  
