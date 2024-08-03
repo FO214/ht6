@@ -1,6 +1,8 @@
 from pymongo.mongo_client import MongoClient
 import certifi
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 #store server access string in var
 uri = os.environ.get("MONGO_CONN_STR")
