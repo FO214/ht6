@@ -9,7 +9,11 @@ body {
     background-color: var(--light-green);
     overflow: hidden;
     font-family: 'VT323', monospace;
+}
+
+.plant-bg {
     background-image: url('bg.jpeg');
+    height: 100vh;
 }
 
 h1 {

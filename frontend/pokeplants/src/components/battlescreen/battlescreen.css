@@ -15,11 +15,14 @@ body{
   display: flex;
   flex-direction: column;
   font-family: 'VT323', monospace;
-  background-image: url('bg3.png');
   background-size: cover; 
   background-position: center;
   background-repeat: no-repeat;
   height: 73vh;
+}
+
+.battle-bg {
+  background-image: url('bg3.png');
 }
 
 .battle-screen {

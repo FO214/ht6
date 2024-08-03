@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './battlescreen.css';
 
 const BattleScreen = () => {
+  useEffect(() => {
+    document.body.classList.add('battle-bg');
+    return () => {
+      document.body.classList.remove('battle-bg');
+    };
+  }, []);
+
   return (
     <div className="page-container">
     <div className="battle-screen">

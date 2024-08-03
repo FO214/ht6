@@ -4,6 +4,13 @@ import './plantdex.css';
 const plants = ['Plant 1', 'Plant 2', 'Plant 3'];
 
 const Plantdex = () => {
+  useEffect(() => {
+    document.body.classList.add('plant-bg');
+    return () => {
+      document.body.classList.remove('plant-bg');
+    };
+  }, []);
+
   const [selectedPlant, setSelectedPlant] = useState(plants[0]); // Automatically select the first plant
   const [showInfo, setShowInfo] = useState(false);
   const [infoHighlighted, setInfoHighlighted] = useState(false);
