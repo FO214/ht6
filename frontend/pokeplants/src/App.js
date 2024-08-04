@@ -30,7 +30,6 @@ const App = () => {
     // Simulate fetching plant data
     setPlants(['Plant 1', 'Plant 2', 'Plant 3']);
     socket().on('game_start', () => {
-      console.log('owo');
       setIsModalOpen(false);
       console.log(playerId, selectedPlant);
       navigate('/battle', { state: { playerId, selectedPlant } }); // feed the playerId

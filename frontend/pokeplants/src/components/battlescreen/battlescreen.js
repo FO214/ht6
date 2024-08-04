@@ -43,6 +43,8 @@ const BattleScreen = () => {
 
     socket().on('init_curr_stats', (data) => {
       setStatus(data);
+      
+      console.log(data)
     });
 
     socket().on('your_turn', (data) => {

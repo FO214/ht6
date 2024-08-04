@@ -34,23 +34,24 @@ def handle_queue_battle():
         players[player_number] = {"health": get_hp(player_map[player_number]), "sid": request.sid}
         emit('player_assignment', {'player': player_number})
         print("player_assignment", player_number)
-        if len(players) == 2:
-            try:
-                humidity, humidity2, brightness = 50, 50, 50  # Placeholder values for sensor data
-                if humidity is None or humidity2 is None or brightness is None:
-                    return jsonify({'error': 'Failed to read sensor data'}), 500
+        try:
+            humidity, humidity2, brightness = 50, 50, 50  # Placeholder values for sensor data
+            if humidity is None or humidity2 is None or brightness is None:
+                return jsonify({'error': 'Failed to read sensor data'}), 500
 
-                game_in_progress = True
-                time.sleep(2.5)
-                emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
-                emit('init_curr_stats', {
+            emit('init_curr_stats', {
                     'humidity': humidity if player_number == 1 else humidity2,
                     'brightness': brightness,
                     'timestamp': time.time()
-                }, room=request.sid)
+                })
+            if len(players) == 2:
+                game_in_progress = True
+                time.sleep(2.5)
+                print(player_number)
+                emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
                 emit('your_turn', {'message': 'Your turn!'}, room=players[1]['sid'])
-            except Exception as e:
-                return e
+        except Exception as e:
+            return e
 
 @socketio.on('move')
 def handle_move(data):
