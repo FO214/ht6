@@ -17,6 +17,7 @@ const App = () => {
   const [selectedPlant, setSelectedPlant] = useState(null);
   const [isLoadingScreen, setIsLoadingScreen] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [playerId, setPlayerId] = useState(-1);
 
   useEffect(() => {
     if (isAuthenticated && initialRedirect) {
@@ -28,10 +29,23 @@ const App = () => {
   useEffect(() => {
     // Simulate fetching plant data
     setPlants(['Plant 1', 'Plant 2', 'Plant 3']);
-    socket.on('game_start', () => {
+    socket().on('game_start', () => {
+      console.log('owo');
       setIsModalOpen(false);
-      navigate('/battle');
+      console.log(playerId, selectedPlant);
+      navigate('/battle', { state: { playerId, selectedPlant } }); // feed the playerId
     });
+
+    socket().on('player_assignment', (data) => {
+      console.log(`Assigned player: ${data.player}`);
+      setPlayerId(data.player);
+    });
+
+    return () => {
+      console.log('close');
+      socket().off('game_start');
+      socket().off('player_assignment');
+    }
   }, []);
 
   useEffect(() => {
@@ -75,7 +89,7 @@ const App = () => {
     setElapsedTime(0);
     setIsLoadingScreen(true);
     setIsModalOpen(true);
-    socket.emit('queue_battle');
+    socket().emit('queue_battle');
   };
   
 

@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import socket from "../../socket"; // Assuming this is the socket initialization
+import { useLocation } from 'react-router-dom';
 import './battlescreen.css';
+import socket from '../../socket';
 
-const BattleScreen = ({ selectedPlant }) => {
+const BattleScreen = () => {
+  const location = useLocation();
+  const { playerId, selectedPlant } = location.state || {};
   const [player, setPlayer] = useState({
     name: selectedPlant?.name || 'Inch Plant',
     level: selectedPlant?.level || 25,
     maxHP: selectedPlant?.maxHP || 122,
-    currentHP: selectedPlant?.currentHP || 122
+    currentHP: selectedPlant?.currentHP || 122,
+    ATK: 90,
+    DEF: 30
   });
 
   const [opponent, setOpponent] = useState({
     name: 'Spider Plant',
     level: 28,
     maxHP: 122,
-    currentHP: 122
+    currentHP: 122,
+    ATK: 90,
+    DEF: 30
   });
 
   const [status, setStatus] = useState({});
   const [attacking, setAttacking] = useState(false);
+  const [isYourTurn, setIsYourTurn] = useState(false);
 
   useEffect(() => {
     document.body.classList.add('battle-bg');
@@ -28,21 +36,23 @@ const BattleScreen = ({ selectedPlant }) => {
   }, []);
 
   useEffect(() => {
-    socket.on('player_assignment', (data) => {
-      console.log(`Assigned player: ${data.player}`);
-    });
+    /*socket().on('connect', () => {
+      console.log('Connected to server');
+      socket().emit('queue_battle');
+    });*/
 
-    socket.on('init_curr_stats', (data) => {
+    socket().on('init_curr_stats', (data) => {
       setStatus(data);
     });
 
-    socket.on('your_turn', (data) => {
+    socket().on('your_turn', (data) => {
       console.log(data.message);
+      setIsYourTurn(true);
     });
 
-    socket.on('move_result', (data) => {
+    socket().on('move_result', (data) => {
       console.log(data);
-      if (data.player === 1) {
+      if (data.player === parseInt(playerId)) {
         setOpponent(prev => ({
           ...prev,
           currentHP: data.opponent_health
@@ -53,30 +63,35 @@ const BattleScreen = ({ selectedPlant }) => {
           currentHP: data.opponent_health
         }));
       }
+      setIsYourTurn(false);
     });
 
-    socket.on('game_over', (data) => {
+    socket().on('game_over', (data) => {
       console.log(`Game Over! Winner: ${data.winner}`);
+      // Handle game over scenario (e.g., show a modal, redirect, etc.)
     });
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from server');
+    socket().on('error', (data) => {
+      console.error('Error:', data.message);
     });
 
     return () => {
-      socket.off('player_assignment');
-      socket.off('init_curr_stats');
-      socket.off('your_turn');
-      socket.off('move_result');
-      socket.off('game_over');
-      socket.off('disconnect');
+      socket().off('init_curr_stats');
+      socket().off('your_turn');
+      socket().off('move_result');
+      socket().off('game_over');
+      socket().off('error');
     };
-  }, []);
+  }, [playerId]);
 
   const handleAttack = (move) => {
+    if (!isYourTurn) {
+      console.log("It's not your turn!");
+      return;
+    }
     setAttacking(true);
-    socket.emit('move', { player: 1, move });
-    setTimeout(() => setAttacking(false), 500); // Reset animation after 500ms
+    socket().emit('move', { player: parseInt(playerId), move });
+    setTimeout(() => setAttacking(false), 500);
   };
 
   const calculateHPClass = (hp, maxHP) => {
@@ -132,15 +147,15 @@ const BattleScreen = ({ selectedPlant }) => {
       </div>
       <div className="attack-screen">
         <div className="actions">
-          <button onClick={() => handleAttack('Attack 1')}>Attack 1</button>
-          <button onClick={() => handleAttack('Attack 2')}>Attack 2</button>
-          <button onClick={() => handleAttack('Attack 3')}>Attack 3</button>
-          <button onClick={() => handleAttack('Attack 4')}>Attack 4</button>
+          <button onClick={() => handleAttack('Attack 1')} disabled={!isYourTurn}>Attack 1</button>
+          <button onClick={() => handleAttack('Attack 2')} disabled={!isYourTurn}>Attack 2</button>
+          <button onClick={() => handleAttack('Attack 3')} disabled={!isYourTurn}>Attack 3</button>
+          <button onClick={() => handleAttack('Attack 4')} disabled={!isYourTurn}>Attack 4</button>
         </div>
         <div className="status">
           <div className="status-effects">
             <span>Status: </span>
-            <span>Poisoned</span>
+            <span>{isYourTurn ? 'Your turn' : "Opponent's turn"}</span>
           </div>
         </div>
       </div>

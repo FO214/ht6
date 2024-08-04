@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, jsonify, request
 from db.main import add_plant, get_hp, get_data, get_atk
 from flask_cors import CORS
@@ -10,16 +11,20 @@ from arduino.read_serial import get_hardware_data
 from arduino.webcam import get_camera_image
 
 app = Flask(__name__)
+app.logger.setLevel(logging.ERROR)
 CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-player_map = {1:"rubylu12345@gmail.com", 2:"sabrinawang93@gmail.com"}
+player_map = {1: "rubylu12345@gmail.com", 2: "sabrinawang93@gmail.com"}
 players = {}
-
 
 current_turn = 1
 game_in_progress = False
+
+@socketio.on('connect')
+def handle_connect():
+    print(f"Client connected: {request.sid}")
 
 @socketio.on('queue_battle')
 def handle_queue_battle():
@@ -27,27 +32,22 @@ def handle_queue_battle():
     if len(players) < 2:
         player_number = len(players) + 1
         players[player_number] = {"health": get_hp(player_map[player_number]), "sid": request.sid}
-        print(f'Player {player_number} connected')
-        emit('player_assignment', {'player': player_map[player_number]})
-        
+        emit('player_assignment', {'player': player_number})
+        print("player_assignment", player_number)
         if len(players) == 2:
             try:
-                # usr not used right now
-                # TODO: uncomment
-                # humidity, humidity2, brightness = get_hardware_data()
-                humidity, humidity2, brightness = 50, 50, 50
+                humidity, humidity2, brightness = 50, 50, 50  # Placeholder values for sensor data
                 if humidity is None or humidity2 is None or brightness is None:
                     return jsonify({'error': 'Failed to read sensor data'}), 500
 
+                game_in_progress = True
+                time.sleep(5)
+                emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
                 emit('init_curr_stats', {
-                    'humidity': humidity if player_number==1 else humidity2,
+                    'humidity': humidity if player_number == 1 else humidity2,
                     'brightness': brightness,
                     'timestamp': time.time()
-                })
-
-                game_in_progress = True
-                print('game_start')
-                emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
+                }, room=request.sid)
                 emit('your_turn', {'message': 'Your turn!'}, room=players[1]['sid'])
             except Exception as e:
                 return e
@@ -58,7 +58,7 @@ def handle_move(data):
     player = data['player']
     atk_stat = get_atk(player_map[player])
     move = data['move']
-    dmg = random.randint(max(0,atk_stat - 10), atk_stat + 10)
+    dmg = random.randint(max(0, atk_stat - 10), atk_stat + 10)
     
     if not game_in_progress:
         emit('error', {'message': 'Game has not started yet'})
@@ -94,13 +94,11 @@ def reset_game():
 @socketio.on('disconnect')
 def handle_disconnect():
     global players, game_in_progress
-    for player, data in players.items():
-            del players[player]
-            break
     if game_in_progress:
         emit('game_over', {'winner': 'Opponent disconnected'}, broadcast=True)
+    else:
+        emit('xxx', {'winner': 'Opponent disconnected'}, broadcast=True)
     reset_game()
-    print('Player disconnected')
 
 @app.route("/create-pokeplant", methods=["POST"])
 def create_pokeplant():
@@ -132,10 +130,8 @@ def feedback():
 
         return jsonify({**res, **response})
 
-
     except Exception as e:
         return e
 
-
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5001)
+    socketio.run(app, debug=False, host='0.0.0.0', port=9631, allow_unsafe_werkzeug=True)
