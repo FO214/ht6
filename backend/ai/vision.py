@@ -79,10 +79,11 @@ def diagnose_plant(base64_image):
         "max_tokens": 300
     }
 
-
+    print('post to api')
     response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    print('do me')
 
-    return json.loads(response.json()['choices'][0]['message']['content'])
+    return response.json()['choices'][0]['message']['content']
 
 
 #print(get_item(image_path_to_base64("test.png")))

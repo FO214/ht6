@@ -104,12 +104,16 @@ def handle_disconnect():
 @app.route("/create-pokeplant", methods=["POST"])
 def create_pokeplant():
     try:
-        data = request.get_json()
-        usr_id = data["user"]
-        get_camera_image()
+        # usr_id = data["user"]
+        print("getting cmaera")
+        # get_camera_image()
+        print("camera finish")
         time.sleep(1)
-        plant = classify_plant(image_path_to_base64("./arduino/snapshot.png"))
-        add_plant(usr_id, plant)
+        print("classifying")
+        plant = classify_plant(image_path_to_base64("./snapshot.png"))
+        # add_plant(usr_id, plant)
+        print("plant: ", plant)
+        return plant
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
@@ -120,7 +124,7 @@ def get_stats():
         data = request.get_json()
         usr_id = data["user"]
         
-        data = get_data(usr_id)
+        data = get_data(player_map[usr_id])
 
         health = data['HP']
 
@@ -143,21 +147,25 @@ def feedback():
         data = request.get_json()
         print(data)
         usr = int(data['plant'][-1])
-        res = get_data(usr)
-        humidity, humidity2, brightness = get_hardware_data()
+        print(usr)
+        res = get_data(player_map[usr])
+        print(res)
+        humidity, humidity2, brightness = 50, 50, 50#get_hardware_data()
+        print(humidity)
         res['brightness'] = brightness
-        res['moist'] = humidity if usr == "P1" else humidity2
-
-        get_camera_image()
-        time.sleep(1)
+        res['moist'] = humidity
+        print("yeah")
+        # get_camera_image()
+        print("here")
         health = diagnose_plant(image_path_to_base64("./arduino/snapshot.png"))
+        print("here1")
 
-        response = agent_executor.invoke({"input":f"given this plant's current brightness, {brightness}%, the current soil moisture level, {res['moist']}%, and current overall health, {health} give some feedback to this plant owner on what they brightness and moistness they should aim for as well as treatment recommendations, also give 2 tips on what they can do better to keep their plant healthies, and finally, a fun fact about the plant type, and return it in a json looking like the following, feedback:, care:, fact:, ONLY return the json, not even markdown identifiers."})
+        response = agent_executor.invoke({"input":f"given this plant's current brightness, {brightness}%, the current soil moisture level, {humidity}%, and current overall health, {health} give some feedback to this plant owner on what they brightness and moistness they should aim for as well as treatment recommendations, also give 2 tips on what they can do better to keep their plant healthies, and finally, a fun fact about the plant type, and return it in a json looking like the following, feedback:, care:, fact:, ONLY return the json, not even markdown identifiers."})
 
-        return jsonify({**res, **response})
+        return jsonify({"response":response})
 
     except Exception as e:
-        return e
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     socketio.run(app, debug=False, host='0.0.0.0', port=9631, allow_unsafe_werkzeug=True)
