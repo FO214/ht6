@@ -41,7 +41,7 @@ def handle_queue_battle():
                     return jsonify({'error': 'Failed to read sensor data'}), 500
 
                 game_in_progress = True
-                time.sleep(5)
+                time.sleep(2.5)
                 emit('game_start', {'message': 'Game is starting!'}, broadcast=True)
                 emit('init_curr_stats', {
                     'humidity': humidity if player_number == 1 else humidity2,

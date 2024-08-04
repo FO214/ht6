@@ -46,7 +46,7 @@ const App = () => {
       socket().off('game_start');
       socket().off('player_assignment');
     }
-  }, []);
+  }, [playerId, selectedPlant]);
 
   useEffect(() => {
     let timer;
