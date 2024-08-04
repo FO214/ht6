@@ -6,12 +6,12 @@
 
 body {
     background-color: var(--light-green);
-    overflow: hidden;
     font-family: 'VT323', monospace;
 }
 
 .plant-bg {
     background-image: url('bg.jpeg');
+    background-size: fill;
     height: 130vh;
 }
 
@@ -108,16 +108,16 @@ h1 {
 }
 
 .plant-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
     margin-top: 20px;
+    justify-items: center;
 }
 
 .plant-circle {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     background-color: var(--light-green);
     border-radius: 50%;
     cursor: pointer;
@@ -126,10 +126,18 @@ h1 {
     justify-content: center;
     margin: 10px;
     border: 4px solid var(--medium-green);
+    position: relative;
+    overflow: hidden;
 }
 
 .plant-circle.selected {
     border: 4px solid var(--dark-green);
+}
+
+.plant-image {
+    width: 60px; 
+    height: 60px; 
+    object-fit: cover; 
 }
 
 .plant-info-text {
@@ -155,10 +163,19 @@ h1 {
 }
 
 .plant-img {
-    width: 150px;
-    height: 150px;
-    background-color: var(--light-green);
+    width: 200px;
+    height: 200px;
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.plant-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the container */
 }
 
 .plant-caption {
@@ -190,8 +207,8 @@ h1 {
 }
 
 .add-plant-circle {
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     background-color: var(--dark-green);
     border-radius: 50%;
     cursor: pointer;
@@ -203,4 +220,14 @@ h1 {
     font-size: 30px;
     font-family: 'VT323', monospace;
     color: var(--light-green);
+    position: relative;
+}
+
+.add-plant-circle.loading {
+    background-color: var(--light-green);
+}
+
+.loading-text {
+    font-size: 20px;
+    color: var(--dark-green);
 }
