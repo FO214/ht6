@@ -2,37 +2,112 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import './battlescreen.css';
 import socket from '../../socket';
+import Modal from '../end-popup/end-popup';
 
 const BattleScreen = () => {
   const location = useLocation();
   const { playerId, selectedPlant } = location.state || {};
-  const [player, setPlayer] = useState({
+  const defaultPlayer = {
     name: selectedPlant?.name || 'Inch Plant',
     level: selectedPlant?.level || 25,
     maxHP: selectedPlant?.maxHP || 122,
     currentHP: selectedPlant?.currentHP || 122,
     ATK: 90,
-    DEF: 30
-  });
+    DEF: 30,
+  };
 
-  const [opponent, setOpponent] = useState({
+  const defaultOpponent = {
     name: 'Spider Plant',
     level: 28,
     maxHP: 122,
     currentHP: 122,
     ATK: 90,
-    DEF: 30
-  });
+    DEF: 30,
+  };
 
+  const [player, setPlayer] = useState(playerId === '1' ? defaultPlayer : defaultOpponent);
+  const [opponent, setOpponent] = useState(playerId === '1' ? defaultOpponent : defaultPlayer);
   const [status, setStatus] = useState({});
   const [attacking, setAttacking] = useState(false);
   const [isYourTurn, setIsYourTurn] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   useEffect(() => {
     document.body.classList.add('battle-bg');
     return () => {
       document.body.classList.remove('battle-bg');
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchStats = async (userId) => {
+      try {
+        const response = await fetch('http://100.67.6.78:9631/get-stats', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ user: userId }),
+        });
+  
+        const data = await response.json();
+  
+        console.log(`Fetched stats for user ${userId}:`, data);
+  
+        if (userId == 1) {
+          if(playerId == 1) {
+            setPlayer((prevPlayer) => ({
+              ...prevPlayer,
+              name: data.name || prevPlayer.name,
+              level: data.level || prevPlayer.level,
+              maxHP: data.maxHP || prevPlayer.maxHP,
+              currentHP: data.currentHP || prevPlayer.currentHP,
+              ATK: data.ATK || prevPlayer.ATK,
+              DEF: data.DEF || prevPlayer.DEF,
+            }));
+          } else {
+            setOpponent((prevOpponent) => ({
+              ...prevOpponent,
+              name: data.name || prevOpponent.name,
+              level: data.level || prevOpponent.level,
+              maxHP: data.maxHP || prevOpponent.maxHP,
+              currentHP: data.currentHP || prevOpponent.currentHP,
+              ATK: data.ATK || prevOpponent.ATK,
+              DEF: data.DEF || prevOpponent.DEF,
+            }));
+          }
+        } else {
+          if(playerId==1) {
+            setOpponent((prevOpponent) => ({
+              ...prevOpponent,
+              name: data.name || prevOpponent.name,
+              level: data.level || prevOpponent.level,
+              maxHP: data.maxHP || prevOpponent.maxHP,
+              currentHP: data.currentHP || prevOpponent.currentHP,
+              ATK: data.ATK || prevOpponent.ATK,
+              DEF: data.DEF || prevOpponent.DEF,
+            }));
+          } else {
+            setPlayer((prevPlayer) => ({
+              ...prevPlayer,
+              name: data.name || prevPlayer.name,
+              level: data.level || prevPlayer.level,
+              maxHP: data.maxHP || prevPlayer.maxHP,
+              currentHP: data.currentHP || prevPlayer.currentHP,
+              ATK: data.ATK || prevPlayer.ATK,
+              DEF: data.DEF || prevPlayer.DEF,
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+  
+    fetchStats(1);
+    fetchStats(2);
   }, []);
 
   useEffect(() => {
@@ -53,7 +128,7 @@ const BattleScreen = () => {
     });
 
     socket().on('move_result', (data) => {
-      console.log(data);
+      console.log(data); 
       if (data.player === parseInt(playerId)) {
         setOpponent(prev => ({
           ...prev,
@@ -65,12 +140,20 @@ const BattleScreen = () => {
           currentHP: data.opponent_health
         }));
       }
-      setIsYourTurn(false);
+      setAnnouncement(`${data.player === 1 ? player.name : opponent.name } uses ${data.move}!`);
     });
 
     socket().on('game_over', (data) => {
       console.log(`Game Over! Winner: ${data.winner}`);
-      // Handle game over scenario (e.g., show a modal, redirect, etc.)
+      setTimeout(() => {
+        if (playerId == data.winner) {
+          setIsModalOpen(true);
+          setModalMessage('You Win!');
+        } else {
+          setIsModalOpen(true);
+          setModalMessage('You Lose :(');
+        }
+      }, 5000);
     });
 
     socket().on('error', (data) => {
@@ -93,7 +176,9 @@ const BattleScreen = () => {
     }
     setAttacking(true);
     socket().emit('move', { player: parseInt(playerId), move });
-    setTimeout(() => setAttacking(false), 500);
+    setTimeout(() => {
+      setAttacking(false)
+    }, 500);
   };
 
   const calculateHPClass = (hp, maxHP) => {
@@ -101,6 +186,10 @@ const BattleScreen = () => {
     if (percentage < 10) return 'hp-red';
     if (percentage < 50) return 'hp-yellow';
     return 'hp-green';
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -115,15 +204,15 @@ const BattleScreen = () => {
             <div className={`health-bar ${calculateHPClass(player.currentHP, player.maxHP)}`}>
               <div
                 className="health"
-                style={{ width: `${(player.currentHP / player.maxHP) * 100}%` }}
+                style={{ width: `${(Math.max(0,player.currentHP) / player.maxHP) * 100}%` }}
               ></div>
             </div>
             <div className="hp-status">
-              <span>HP</span> <span>{player.currentHP}/{player.maxHP}</span>
+              <span>HP</span> <span>{Math.max(0,player.currentHP)}/{player.maxHP}</span>
             </div>
           </div>
           <div className="player-plant-battler">
-            <img className={`plant-image ${player.currentHP === 0 ? 'fainted' : ''}`} src={`${process.env.PUBLIC_URL}/assets/inchplant.png`} alt="Inch Plant" />
+            <img className={`plant-image ${Math.max(0,player.currentHP) <= 0 ? 'fainted' : ''}`} src={player.name == "Inch Plant" ? `${process.env.PUBLIC_URL}/assets/inchplant.png` : `${process.env.PUBLIC_URL}/assets/spiderplant.png`} alt="" />
           </div>
         </div>
         <div className="opponent-plant">
@@ -135,24 +224,27 @@ const BattleScreen = () => {
             <div className={`health-bar ${calculateHPClass(opponent.currentHP, opponent.maxHP)}`}>
               <div
                 className="health"
-                style={{ width: `${(opponent.currentHP / opponent.maxHP) * 100}%` }}
+                style={{ width: `${(Math.max(0,opponent.currentHP) / opponent.maxHP) * 100}%` }}
               ></div>
             </div>
             <div className="hp-status">
-              <span>HP</span> <span>{opponent.currentHP}/{opponent.maxHP}</span>
+              <span>HP</span> <span>{Math.max(0,opponent.currentHP)}/{opponent.maxHP}</span>
             </div>
           </div>
           <div className={`opponent-plant-battler ${attacking ? 'attacking' : ''}`}>
-            <img className={`plant-image ${opponent.currentHP === 0 ? 'fainted' : ''}`} src={`${process.env.PUBLIC_URL}/assets/spiderplant.png`} alt="Spider Plant" />
+            <img className={`plant-image ${opponent.currentHP <= 0 ? 'fainted' : ''}`} src = {player.name == "Spider Plant" ? `${process.env.PUBLIC_URL}/assets/inchplant.png` : `${process.env.PUBLIC_URL}/assets/spiderplant.png`} alt="" />
           </div>
         </div>
       </div>
+      <div className="attack-text">
+        <h3>{announcement}</h3>
+      </div>
       <div className="attack-screen">
         <div className="actions">
-          <button onClick={() => handleAttack('Attack 1')} disabled={!isYourTurn}>Solar Beam</button>
-          <button onClick={() => handleAttack('Attack 2')} disabled={!isYourTurn}>Pollen Bomb</button>
-          <button onClick={() => handleAttack('Attack 3')} disabled={!isYourTurn}>Vine Whip</button>
-          <button onClick={() => handleAttack('Attack 4')} disabled={!isYourTurn}>Leaf Storm</button>
+          <button onClick={() => handleAttack('Solar Beam')} disabled={!isYourTurn || player.currentHP <= 0 || opponent.currentHP <= 0}>Solar Beam</button>
+          <button onClick={() => handleAttack('Pollen Bomb')} disabled={!isYourTurn || player.currentHP <= 0 || opponent.currentHP <= 0}>Pollen Bomb</button>
+          <button onClick={() => handleAttack('Vine Whip')} disabled={!isYourTurn || player.currentHP <= 0 || opponent.currentHP <= 0}>Vine Whip</button>
+          <button onClick={() => handleAttack('Leaf Storm')} disabled={!isYourTurn || player.currentHP <= 0 || opponent.currentHP <= 0}>Leaf Storm</button>
         </div>
         <div className="status">
           <div className="status-effects">
@@ -161,6 +253,11 @@ const BattleScreen = () => {
           </div>
         </div>
       </div>
+      <Modal 
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        message={modalMessage}
+      />
     </div>
   );
 };
