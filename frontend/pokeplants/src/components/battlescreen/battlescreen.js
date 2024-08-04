@@ -149,10 +149,10 @@ const BattleScreen = () => {
       </div>
       <div className="attack-screen">
         <div className="actions">
-          <button onClick={() => handleAttack('Attack 1')} disabled={!isYourTurn}>Attack 1</button>
-          <button onClick={() => handleAttack('Attack 2')} disabled={!isYourTurn}>Attack 2</button>
-          <button onClick={() => handleAttack('Attack 3')} disabled={!isYourTurn}>Attack 3</button>
-          <button onClick={() => handleAttack('Attack 4')} disabled={!isYourTurn}>Attack 4</button>
+          <button onClick={() => handleAttack('Attack 1')} disabled={!isYourTurn}>Solar Beam</button>
+          <button onClick={() => handleAttack('Attack 2')} disabled={!isYourTurn}>Pollen Bomb</button>
+          <button onClick={() => handleAttack('Attack 3')} disabled={!isYourTurn}>Vine Whip</button>
+          <button onClick={() => handleAttack('Attack 4')} disabled={!isYourTurn}>Leaf Storm</button>
         </div>
         <div className="status">
           <div className="status-effects">
