@@ -6,6 +6,12 @@ const plants = ['Plant 1', 'Plant 2'];
 
 const Plantdex = () => {
   const navigate = useNavigate();
+  const [selectedPlant, setSelectedPlant] = useState(plants[0]);
+  const [showInfo, setShowInfo] = useState(false);
+  const [infoHighlighted, setInfoHighlighted] = useState(false);
+  const [info, setInfo] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     document.body.classList.add('plant-bg');
@@ -14,28 +20,44 @@ const Plantdex = () => {
     };
   }, []);
 
-  const [selectedPlant, setSelectedPlant] = useState(plants[0]);
-  const [showInfo, setShowInfo] = useState(false);
-  const [infoHighlighted, setInfoHighlighted] = useState(false);
-
   useEffect(() => {
     setSelectedPlant(plants[0]);
   }, []);
 
-  const handlePlantClick = (plant) => {
+  const handlePlantClick = async (plant) => {
     setSelectedPlant(plant);
     setShowInfo(false);
     setInfoHighlighted(false);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('http://100.67.6.78:9631/plant-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ plant }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setInfo(data.response);
+      setShowInfo(true);
+    } catch (error) {
+      setError('Error fetching plant info.');
+      console.error('Error fetching plant info:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInfoClick = () => {
-    if (showInfo) {
-      setShowInfo(false);
-      setInfoHighlighted(false);
-    } else {
-      setShowInfo(true);
-      setInfoHighlighted(true);
-    }
+    setShowInfo((prevShowInfo) => !prevShowInfo);
+    setInfoHighlighted((prevInfoHighlighted) => !prevInfoHighlighted);
   };
 
   const handleBackClick = () => {
@@ -49,7 +71,6 @@ const Plantdex = () => {
   };
 
   const handleAddPlantClick = () => {
-    /* ADD BACKEND STUFF HERE */
     console.log("Add Plant Clicked");
   };
 
@@ -68,30 +89,35 @@ const Plantdex = () => {
               {showInfo ? 'HIDE INFO' : 'SHOW INFO'}
             </button>
           </div>
-          {showInfo && selectedPlant ? (
-            <div className="plant-info-text">
-              <p>{`Information about ${selectedPlant}`}</p>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget augue eu lacus commodo sodales. Sed at dui in orci egestas vehicula.</p>
-            </div>
+          {loading ? (
+            <p>Loading...</p>
           ) : (
-            <div className="plant-list">
-              {plants.map((plant, index) => (
-                <div 
-                  key={index} 
-                  className={`plant-circle ${selectedPlant === plant ? 'selected' : ''}`} 
-                  onClick={() => handlePlantClick(plant)}
-                >
-                  {plant}
-                </div>
-              ))}
-              <div 
-                className="add-plant-circle"
-                onClick={handleAddPlantClick}
-              >
-                +
+            showInfo && selectedPlant ? (
+              <div className="plant-info-text">
+                <p>{`Information about ${selectedPlant}`}</p>
+                {info ? <p>{JSON.stringify(info)}</p> : <p>No Data Retrieved.</p>}
               </div>
-            </div>
+            ) : (
+              <div className="plant-list">
+                {plants.map((plant, index) => (
+                  <div 
+                    key={index} 
+                    className={`plant-circle ${selectedPlant === plant ? 'selected' : ''}`} 
+                    onClick={() => handlePlantClick(plant)}
+                  >
+                    {plant}
+                  </div>
+                ))}
+                <div 
+                  className="add-plant-circle"
+                  onClick={handleAddPlantClick}
+                >
+                  +
+                </div>
+              </div>
+            )
           )}
+          {error && <p className="error">{error}</p>}
         </div>
         <div className="main">
           {selectedPlant && (
