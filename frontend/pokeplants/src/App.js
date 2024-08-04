@@ -41,7 +41,6 @@ const App = () => {
     });
 
     return () => {
-      console.log('close');
       socket().off('game_start');
       socket().off('player_assignment');
     }
