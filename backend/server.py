@@ -115,7 +115,7 @@ def create_pokeplant():
     
 
 @app.route("/get-stats", methods=["POST"])
-def create_pokeplant():
+def get_stats():
     try:
         data = request.get_json()
         usr_id = data["user"]
