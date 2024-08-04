@@ -17,15 +17,36 @@ const Plantdex = () => {
   const [selectedPlant, setSelectedPlant] = useState(plants[0]);
   const [showInfo, setShowInfo] = useState(false);
   const [infoHighlighted, setInfoHighlighted] = useState(false);
+  const [info, setInfo] = useState("");
 
   useEffect(() => {
     setSelectedPlant(plants[0]);
   }, []);
 
-  const handlePlantClick = (plant) => {
+  const handlePlantClick = async (plant) => {
     setSelectedPlant(plant);
     setShowInfo(false);
     setInfoHighlighted(false);
+
+    try {
+      const response = await fetch('http://100.67.199.31:9631/plant-profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ "plant":plant }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setInfo(data);
+      setShowInfo(true); 
+    } catch (error) {
+      console.error('Error fetching plant info:', error);
+    }
   };
 
   const handleInfoClick = () => {
@@ -71,7 +92,7 @@ const Plantdex = () => {
           {showInfo && selectedPlant ? (
             <div className="plant-info-text">
               <p>{`Information about ${selectedPlant}`}</p>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam eget augue eu lacus commodo sodales. Sed at dui in orci egestas vehicula.</p>
+              {info ? <p>{info}</p> : <p>No Data Retreived.</p>}
             </div>
           ) : (
             <div className="plant-list">
