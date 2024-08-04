@@ -12,7 +12,7 @@ from arduino.webcam import get_camera_image
 
 app = Flask(__name__)
 app.logger.setLevel(logging.ERROR)
-CORS(app)
+#CORS(app)
 CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
@@ -112,12 +112,37 @@ def create_pokeplant():
         add_plant(usr_id, plant)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+
+@app.route("/get-stats", methods=["POST"])
+def create_pokeplant():
+    try:
+        data = request.get_json()
+        usr_id = data["user"]
+        
+        data = get_data(usr_id)
+
+        health = data['HP']
+
+        data.pop('HP')
+
+        data['maxHP'] = health
+        data['currentHP'] = health
+        data['level'] = 25
+
+        return data
+
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route("/plant-profile", methods=["POST"])
 def feedback():
     try:
         data = request.get_json()
-        usr = data['user']
+        print(data)
+        usr = int(data['plant'][-1])
         res = get_data(usr)
         humidity, humidity2, brightness = get_hardware_data()
         res['brightness'] = brightness
